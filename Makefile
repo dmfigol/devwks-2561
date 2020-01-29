@@ -5,7 +5,7 @@ prepenv:
 	pip install -r requirements.txt
 
 provision:
-	.venv/bin/python 
+	cd code; ../.venv/bin/python provision.py
 
 vagrant:
 	@echo "*** Stopping Existing VMs ***"

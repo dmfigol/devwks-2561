@@ -1,0 +1,6 @@
+.venv
+nc_edit_hostname.py
+nc_capabilities.py
+.vagrant
+.vscode
+__pycache__

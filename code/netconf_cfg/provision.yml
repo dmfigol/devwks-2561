@@ -1,0 +1,99 @@
+_namespaces:
+  ianaift: "urn:ietf:params:xml:ns:yang:iana-if-type"
+  interfaces:
+    _xmlns: urn:ietf:params:xml:ns:yang:ietf-interfaces
+    interface:
+      - name: VirtualPortGroup0
+        description: NAT interface for Guestshell
+        enabled: true
+        type+ianaift: ianaift:propVirtual
+        ipv4:
+          _xmlns: urn:ietf:params:xml:ns:yang:ietf-ip
+          address:
+            ip: 192.168.35.1
+            netmask: 255.255.255.0
+      - name: GigabitEthernet2
+        description: provisioned by script
+        enabled: true
+        type+ianaift: ianaift:ethernetCsmacd
+        ipv4:
+          _xmlns: urn:ietf:params:xml:ns:yang:ietf-ip
+          address:
+            ip: 172.16.20.1
+            netmask: 255.255.255.0
+      - name: GigabitEthernet3
+        description: provisioned by script
+        enabled: true
+        type+ianaift: ianaift:ethernetCsmacd
+        ipv4:
+          _xmlns: urn:ietf:params:xml:ns:yang:ietf-ip
+          address:
+            ip: 192.168.185.1
+            netmask: 255.255.255.0
+native:
+  _xmlns: http://cisco.com/ns/yang/Cisco-IOS-XE-native
+  hostname: R1
+  ip:
+    access-list:
+      standard:
+        - name: NAT_ACL
+          _xmlns: http://cisco.com/ns/yang/Cisco-IOS-XE-acl
+          access-list-seq-rule:
+            sequence: 10
+            permit:
+              std-ace:
+                ipv4-prefix: 192.168.0.0
+                mask: 0.255.255.255
+      extended:
+        - name: CISCO_LIVE_IN
+          _xmlns: http://cisco.com/ns/yang/Cisco-IOS-XE-acl
+          access-list-seq-rule:
+            - sequence: 10
+              ace-rule:
+                action: deny
+                protocol: icmp
+                ipv4-address: 8.8.0.0
+                mask: 0.0.255.255
+                dst-any: null
+            - sequence: 20
+              ace-rule:
+                action: permit
+                protocol: icmp
+                ipv4-address: 208.67.0.0
+                mask: 0.0.255.255
+                dst-any: null
+            - sequence: 30
+              ace-rule:
+                action: permit
+                protocol: ip
+                any: null
+                dst-any: null
+    # nat:
+    #   _xmlns: http://cisco.com/ns/yang/Cisco-IOS-XE-nat
+    #   inside:
+    #     source:
+    #       list:
+    #         - id: NAT_ACL
+    #           interface:
+    #             name: GigabitEthernet1
+    #             overload: null
+  interface:
+    - GigabitEthernet:
+        name: 1
+        ip:
+          nat:
+            _xmlns: http://cisco.com/ns/yang/Cisco-IOS-XE-nat
+            outside: null
+          access-group:
+            in:
+              acl:
+                acl-name: CISCO_LIVE_IN
+                in: null
+    - VirtualPortGroup:
+        name: 0
+        ip:
+          nat:
+            _xmlns: http://cisco.com/ns/yang/Cisco-IOS-XE-nat
+            inside: null
+        
+        
