@@ -11,7 +11,7 @@ prepenv-mac:
 	source .venv/bin/activate; \
 	pip install -U pip setuptools; \
 	pip install -r requirements.txt; \
-	xdg-open https://github.com/dmfigol/devwks-2561/blob/master/guide.md; \
+	open https://github.com/dmfigol/devwks-2561/blob/master/guide.md; \
 	code .
 
 provision:
