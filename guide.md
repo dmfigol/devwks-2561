@@ -17,6 +17,17 @@ pyang -f tree models/Cisco-IOS-XE-platform-software-oper.yang
 ```
 
 ## Module 2: Working with NETCONF
+To login to the device via SSH, execute
+```
+vagrant ssh r1
+```
+
+To connect to the device via NETCONF on CLI, execute:  
+```
+ssh vagrant@localhost -p 2223 -s netconf
+```
+
+
 #### Task 0 - Generate Traffic for Counters
 ```
 cd code

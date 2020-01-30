@@ -2,14 +2,33 @@ from typing import Any, Optional, Union
 
 from lxml import etree
 from xml.dom.minidom import parseString
-import xml.etree.cElementTree
 
-ElementType = type(xml.etree.cElementTree.Element(None))
 
 
 def dict_to_xml(
     data: Any, root: Union[None, str, etree._Element] = None, attr_marker: str = "_"
 ) -> etree.Element:
+    """Converts Python dictionary with YANG data to lxml etree.Element object.
+
+    XML attributes must be represented in nested dictionary, which is accessed by the 
+      element name. Attribute keys must be prepended with underscore. Common use-cases:
+      * operation attribute. For example:
+        {"vrf": {"_operation": "replace"}} -> <vrf operation="replace"></vrf>
+      * changing default namespace. For example:
+        {"native": {"hostname": "R1", "_xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XE-native"}} ->
+        <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native"><hostname>R1</hostname></native>
+
+    Empty XML tags (including self-closing tags) are represented with value `None`:
+       {"address-family": {"ipv4": None}} -> <address-family><ipv4/></address-family>
+
+    Namespaces with prefix:
+      1. They need to be defined under the top-level key "_namespaces" in the dictionary
+         in the form prefix:namespace. E.g.:
+         {"_namespaces": {"ianaift": "urn:ietf:params:xml:ns:yang:iana-if-type"}}
+      2. Use the form `element-name+prefix` to use it for a specific element. E.g.:
+         {"type+ianaift": "ianaift:ethernetCsmacd"} -> 
+         <type ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+    """
     namespaces = data.pop("_namespaces", {})
 
     def _dict_to_xml(data_: Any, parent: Optional[etree._Element] = None) -> None:

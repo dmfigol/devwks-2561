@@ -41,7 +41,7 @@ CONFIG = """
                 </address-family>
             </definition>
             <definition>
-                <name>Cisco-LIVE</name>
+                <name>RANDOM</name>
                 <address-family>
                     <ipv4/>
                     <ipv6/>
@@ -56,6 +56,11 @@ CONFIG = """
 def main():
     with manager.connect(**constants.NC_CONN_PARAMS) as m:
         nc_reply = m.edit_config(CONFIG, target="running")
+        if nc_reply.ok:
+            print("Config was successfully modified")
+        else:
+            print("Config modification failed")
+
 
 
 if __name__ == '__main__':

@@ -46,20 +46,22 @@ def main():
         nc_reply = m.get_config('running', FILTER)
         print(utils.prettify_xml(nc_reply.xml))
 
-        # Parse the XM
-        intf_details = xmltodict.parse(nc_reply.xml)["rpc-reply"]["data"]
-        intf_config = intf_details["interfaces"]["interface"]
+        data = xmltodict.parse(nc_reply.xml, force_list="interface")["rpc-reply"]["data"]
 
-        print("*" * 50)
-        interface_str = (
-            f"Interface details:\n"
-            f" name: {intf_config['name']['#text']}\n"
-            f" description: {intf_config['description']}\n"
-            f" type: {intf_config['type']['#text']}\n"
-            f" enabled: {intf_config['enabled']}"
-        )
-        print(interface_str)
-        print("*" * 50)
+        if "interfaces" in data:
+            for intf_config in data["interfaces"]["interface"]:
+                print("*" * 50)
+                int_name = intf_config['name']
+                if not isinstance(int_name, str):
+                    int_name = int_name["#text"]
+                interface_str = (
+                    f"Interface: {int_name}\n"
+                    f" description: {intf_config.get('description', '')}\n"
+                    f" type: {intf_config['type']['#text']}\n"
+                    f" enabled: {intf_config['enabled']}"
+                )
+                print(interface_str)
+                print("*" * 50)
 
 
 if __name__ == '__main__':

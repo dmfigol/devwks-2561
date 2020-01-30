@@ -21,7 +21,8 @@ or implied.
 
 __author__ = "Dmitry Figol <git@dmfigol.me>"
 __contributors__ = [
-    "Bryan Byrne <brybyrne@cisco.com>", "Hank Preston <hapresto@cisco.com>",
+    "Bryan Byrne <brybyrne@cisco.com>",
+    "Hank Preston <hapresto@cisco.com>",
 ]
 __copyright__ = "Copyright (c) 2020 Cisco and/or its affiliates."
 __license__ = "Cisco Sample Code License, Version 1.1"
@@ -36,19 +37,14 @@ from utils import prettify_xml as P
 
 
 def main():
-    with manager.connect(
-        host=constants.NC_HOST,
-        port=constants.NC_PORT,
-        username=constants.DEVICE_USERNAME,
-        password=constants.DEVICE_PASSWORD,
-        timeout=30,
-        hostkey_verify=False,
-    ) as nc, open("netconf_cfg/provision.yml") as f:
+    with manager.connect(**constants.NC_CONN_PARAMS) as nc, open(
+        "netconf_cfg/provision.yml"
+    ) as f:
         yaml = YAML(typ="safe")
         data = yaml.load(f)
         xml = utils.dict_to_xml(data, root="config")
         print(f"Sending RPC:\n{P(xml)}")
-        xml_str = etree.tostring(xml).decode('utf-8')
+        xml_str = etree.tostring(xml).decode("utf-8")
         nc_reply = nc.edit_config(xml_str, target="running")
         print(f"Received RPC reply:\n{P(nc_reply.xml)}")
 
